@@ -1,16 +1,18 @@
 #include "PlayerShip.h"
-
-#ifndef ALGORITHM_H_
-#define ALGORITHM_H_
-#include <algorithm>
-#endif
-
 #include "Switch.h"
 
 
 const unsigned short bullet[] = {
  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
 };
+
+int32_t min(int32_t a, int32_t b){
+    return (a <= b) ? a : b;
+}
+
+int32_t max(int32_t a, int32_t b){
+    return (a >= b) ? a : b;
+}
 
 /**
  * @brief Construct a new Player Ship:: Player Ship object
@@ -69,8 +71,8 @@ void PlayerShip::update() {
     // Other updates
     updateSpriteIndex();
     // Boundary checks
-    _position.x = std::max(0, std::min(_position.x, (SCREENWIDTH << FP_SHIFT) - _size.x));
-    _position.y = std::max(0, std::min(_position.y, (SCREENHEIGHT << FP_SHIFT) - _size.y));
+    _position.x = max(0, min(_position.x, (SCREENWIDTH << FP_SHIFT) - _size.x));
+    _position.y = max(0, min(_position.y, (SCREENHEIGHT << FP_SHIFT) - _size.y));
 }
 
 
@@ -81,10 +83,10 @@ void PlayerShip::applyForce(const FPVector2D& force) {
 
 void PlayerShip::draw(const uint16_t* bg) {
     // Calculate minimal update area
-    int minX = std::min(_previousPosition.x, _position.x) >> FP_SHIFT;
-    int minY = std::min(_previousPosition.y, _position.y) >> FP_SHIFT;
-    int maxX = std::max(_previousPosition.x + _size.x, _position.x + _size.x) >> FP_SHIFT;
-    int maxY = std::max(_previousPosition.y + _size.y, _position.y + _size.y) >> FP_SHIFT;
+    int minX = min(_previousPosition.x, _position.x) >> FP_SHIFT;
+    int minY = min(_previousPosition.y, _position.y) >> FP_SHIFT;
+    int maxX = max(_previousPosition.x + _size.x, _position.x + _size.x) >> FP_SHIFT;
+    int maxY = max(_previousPosition.y + _size.y, _position.y + _size.y) >> FP_SHIFT;
 
     // Redraw only the necessary area
     for (int y = minY; y < maxY && y < SCREENHEIGHT; ++y) {

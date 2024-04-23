@@ -17,7 +17,7 @@
 #include "Switch.h"
 #include "LED.h"
 #include "Sound.h"
-#include "images/images.h"
+#include "images.h"
 extern "C" void __disable_irq(void);
 extern "C" void __enable_irq(void);
 extern "C" void TIMG12_IRQHandler(void);
