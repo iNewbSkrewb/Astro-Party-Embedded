@@ -58,12 +58,12 @@ void PlayerShip::update() {
     int32_t cos_value = COS_LUT[angleIndex];
 
     // Calculate the desired velocity based on the current angle
-    int32_t desired_vel_x = (cos_value * PLAYERSPEED) / 1024;
-    int32_t desired_vel_y = (-sin_value * PLAYERSPEED) / 1024;
+    int32_t desired_vel_x = (cos_value * PLAYERSPEED) >> 10; // dividing by 1024
+    int32_t desired_vel_y = (-sin_value * PLAYERSPEED) >> 10;
 
     // Gradually adjust the current velocity towards the desired velocity
-    _velocity.x = _velocity.x + DRIFT_FACTOR * (desired_vel_x - _velocity.x);
-    _velocity.y = _velocity.y + DRIFT_FACTOR * (desired_vel_y - _velocity.y);
+    _velocity.x += DRIFT_FACTOR * (desired_vel_x - _velocity.x);
+    _velocity.y += DRIFT_FACTOR * (desired_vel_y - _velocity.y);
 
     // Update position based on the new velocity
     _position += _velocity;
@@ -76,10 +76,6 @@ void PlayerShip::update() {
 }
 
 
-
-void PlayerShip::applyForce(const FPVector2D& force) {
-    _acceleration += force;
-}
 
 void PlayerShip::draw(const uint16_t* bg) {
     // Calculate minimal update area

@@ -21,7 +21,7 @@
 
 class PlayerShip { //  TODO: implement proper movement mechanics and input handling, both here and in TimerG12
 public:
-    FPVector2D _position, _previousPosition, _velocity, _acceleration, _size;
+    FPVector2D _position, _previousPosition, _velocity, /*_acceleration,*/ _size;
     int32_t _angle;
     const uint16_t** _sprites; // array of sprites for each various angles
     int _spriteIndex; // Based on angle
