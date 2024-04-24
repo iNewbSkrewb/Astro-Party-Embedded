@@ -8,7 +8,7 @@
 #include "../inc/ST7735.h"
 #include "../inc/Clock.h"
 #include "../inc/LaunchPad.h"
-#include "../inc/TExaS.h"
+//#include "../inc/TExaS.h"
 #include "../inc/Timer.h"
 #include "../inc/SlidePot.h"
 #include "../inc/DAC5.h"
@@ -18,6 +18,7 @@
 #include "LED.h"
 #include "Sound.h"
 #include "images.h"
+#include "ScreenManager.h"
 extern "C" void __disable_irq(void);
 extern "C" void __enable_irq(void);
 extern "C" void TIMG12_IRQHandler(void);
@@ -32,18 +33,8 @@ void PLL_Init(void)
   Clock_Init80MHz(0); // run this line for 80MHz
 }
 
-uint32_t M = 1;
-uint32_t Random32(void)
-{
-  M = 1664525 * M + 1013904223;
-  return M;
-}
-uint32_t Random(uint32_t n)
-{
-  return (Random32() >> 16) % n;
-}
 
-SlidePot Sensor(1500, 0); // copy calibration from Lab 7
+SlidePot Sensor(2450, -440); // copy calibration from Lab 7
 
 // Define initial velocities for ships
 const FPVector2D initialVelocityShip1(1 << FP_SHIFT, 0);
@@ -57,35 +48,29 @@ PlayerShip players[2] = {
 };
 const uint16_t* bg = orangebg;
 
+game_state_t game_state = GAME;
+
 volatile int semaphore = 0;
+
 // games  engine runs at 30Hz
 void TIMG12_IRQHandler(void)
 {
   uint32_t pos, msg;
   if ((TIMG12->CPU_INT.IIDX) == 1)
-  {                             // this will acknowledge
-    GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
-    GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
-                                // game engine goes here
-    // 1) sample slide pot
-    // 2) read input switches
-    // 3) move sprites
-    // 4) start sounds
-    // 5) set semaphore
-    // NO LCD OUTPUT IN INTERRUPT SERVICE ROUTINES
+
+    uint32_t adcdata = Sensor.In();
     if (Switch_In() & (1<<13)){
       players[1].handleInput();
       players[1].shoot();
     }
-    for (PlayerShip& ship : players) {ship.update(); ship.updateProjectiles(bg);}
-    semaphore = 1;
-    GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
-  }
-}
 
-uint8_t TExaS_LaunchPadLogicPB27PB26(void)
-{
-  return (0x80 | ((GPIOB->DOUT31_0 >> 26) & 0x03));
+    switch (game_state){
+    case START: startScreenUpdate(); break;
+    case GAME: gameScreenUpdate(); break;
+    case WIN: winScreenUpdate();
+    }
+    // 4) start sounds
+    semaphore = 1;
 }
 
 
@@ -103,7 +88,7 @@ int main(void)
   Switch_Init(); // initialize switches
   LED_Init();    // initialize LED
   Sound_Init();  // initialize sound
-  TExaS_Init(0,0,&TExaS_LaunchPadLogicPB27PB26); // PB27 and PB26
+//  TExaS_Init(0,0,&TExaS_LaunchPadLogicPB27PB26); // PB27 and PB26
   TimerG12_IntArm(80000000 / 30, 2);
   __enable_irq();
 
@@ -121,8 +106,10 @@ int main(void)
        // clear semaphore
       semaphore = 0;
        // update ST7735R
-      for (PlayerShip& p : players){
-          p.draw(bg);
+      switch (game_state){
+      case START: drawStartScreen(); break;
+      case GAME: drawGameScreen(); break;
+      case WIN: drawWinScreen();
       }
     // check for end game or level switch
   }
@@ -144,3 +131,18 @@ int main(void)
   //           ST7735_DrawPixel(startX + j, startY + i, color);  // Draw the pixel at the correct location
   //       }
   //   }
+
+    //uint8_t TExaS_LaunchPadLogicPB27PB26(void)
+    //{
+    //  return (0x80 | ((GPIOB->DOUT31_0 >> 26) & 0x03));
+    //}
+    //uint32_t M = 1;
+    //uint32_t Random32(void)
+    //{
+    //  M = 1664525 * M + 1013904223;
+    //  return M;
+    //}
+    //uint32_t Random(uint32_t n)
+    //{
+    //  return (Random32() >> 16) % n;
+    //}
