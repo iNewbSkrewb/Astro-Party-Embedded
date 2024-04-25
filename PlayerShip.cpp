@@ -159,3 +159,23 @@ void PlayerShip::updateProjectiles(const uint16_t* bg) {
         }
     }
 }
+
+bool PlayerShip::checkCollision(const PlayerShip& opponent) {
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (projectiles[i].active) {
+            int projX = projectiles[i].position.x >> FP_SHIFT;
+            int projY = projectiles[i].position.y >> FP_SHIFT;
+            int oppX = opponent._position.x >> FP_SHIFT;
+            int oppY = opponent._position.y >> FP_SHIFT;
+            int oppW = opponent._size.x >> FP_SHIFT;
+            int oppH = opponent._size.y >> FP_SHIFT;
+
+            // Check if the projectile is within the opponent's bounding box
+            if (projX >= oppX && projX < oppX + oppW &&
+                projY >= oppY && projY < oppY + oppH) {
+                return true; // Collision detected
+            }
+        }
+    }
+    return false; // No collision
+}

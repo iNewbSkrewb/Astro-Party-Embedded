@@ -41,6 +41,7 @@ public:
     void updateProjectiles();
     void drawProjectiles(const uint16_t* bg);
     void updateProjectiles(const uint16_t* bg);
+    bool checkCollision(const PlayerShip& opponent);
 
 
 private:
