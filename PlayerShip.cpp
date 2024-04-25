@@ -25,7 +25,7 @@ int32_t max(int32_t a, int32_t b){
  * @param images
  */
 // Assuming FPVector2D has methods to handle fixed-point assignments
-PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t **images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode)
+PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t **images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex)
     : _position(x << FP_SHIFT, y << FP_SHIFT), // Assume constructor of FPVector2D shifts internally if needed
       _velocity(initialVelocity), // Use the initialVelocity provided
       _size(w << FP_SHIFT, h << FP_SHIFT), // Assume constructor of FPVector2D shifts internally if needed
@@ -34,7 +34,8 @@ PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle
       _totalSprites(totalSprites),
       _boundaryMode(boundaryMode), // Store the boundary mode
       _inputLeft(false),
-      _inputRight(true)
+      _inputRight(true),
+      _oppIndex(oppIndex)
 {
     updateSpriteIndex(); // Calculate the initial sprite index
 }

@@ -13,7 +13,7 @@
 #define SCREENWIDTH 160
 #define SCREENHEIGHT 128
 #define TOTAL_SPRITES 24
-#define MAX_PROJECTILES 10
+#define MAX_PROJECTILES 4
 
 #include "Vector.h"
 #include "Projectile.h"
@@ -26,11 +26,12 @@ public:
     const uint16_t** _sprites; // array of sprites for each various angles
     int _spriteIndex; // Based on angle
     int _totalSprites;
+    uint8_t _oppIndex;
     enum BoundaryMode { STOP, WRAP, BOUNCE } _boundaryMode;
     bool _inputLeft, _inputRight;
     Projectile projectiles[MAX_PROJECTILES];
 
-    PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t** images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode);
+    PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t** images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex);
     void update();
     void applyForce(const FPVector2D& force);
     void draw(const uint16_t* background);

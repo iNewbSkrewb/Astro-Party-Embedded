@@ -43,8 +43,8 @@ const FPVector2D initialVelocityShip2(1 << FP_SHIFT, 0);
 // Global array of PlayerShip objects
 // Correctly initialize the players with all required arguments
 PlayerShip players[2] = {
-    PlayerShip(40, 60, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip1, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP),
-    PlayerShip(60, 40, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip2, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP)
+    PlayerShip(40, 60, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip1, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 1),
+    PlayerShip(60, 40, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip2, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 0)
 };
 const uint16_t* bg = orangebg;
 
