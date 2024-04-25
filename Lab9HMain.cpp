@@ -43,8 +43,8 @@ const FPVector2D initialVelocityShip2(1 << FP_SHIFT, 0);
 // Global array of PlayerShip objects
 // Correctly initialize the players with all required arguments
 PlayerShip players[2] = {
-    PlayerShip(40, 60, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip1, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 1),
-    PlayerShip(60, 40, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip2, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 0)
+    PlayerShip(40, 60, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip1, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 1, 31, 31),
+    PlayerShip(60, 40, PLAYERWIDTH, PLAYERHEIGHT, 0, ship1, initialVelocityShip2, TOTAL_SPRITES, PlayerShip::BoundaryMode::STOP, 0, 13, 17)
 };
 const uint16_t* bg = orangebg;
 
@@ -59,14 +59,11 @@ void TIMG12_IRQHandler(void)
   if ((TIMG12->CPU_INT.IIDX) == 1)
 
     uint32_t adcdata = Sensor.In();
-    if (Switch_In() & (1<<13)){
-      players[1].handleInput();
-      players[1].shoot();
-    }
+    uint32_t buttons = Switch_In();
 
     switch (game_state){
     case START: startScreenUpdate(); break;
-    case GAME: gameScreenUpdate(); break;
+    case GAME: gameScreenUpdate(buttons); break;
     case WIN: winScreenUpdate();
     }
     // 4) start sounds

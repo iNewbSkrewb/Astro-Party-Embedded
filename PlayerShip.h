@@ -31,8 +31,8 @@ public:
     bool _inputLeft, _inputRight;
     Projectile projectiles[MAX_PROJECTILES];
 
-    PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t** images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex);
-    void update();
+    PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t** images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex, uint32_t turn, uint32_t shoot);
+    void update(uint32_t buttons);
     void applyForce(const FPVector2D& force);
     void draw(const uint16_t* background);
     void shootProjectile();
@@ -45,6 +45,8 @@ public:
 
 private:
     void updateSpriteIndex();
+    uint32_t turnButton;
+    uint32_t shootButton;
 };
 
 #endif /* PLAYERSHIP_H_ */

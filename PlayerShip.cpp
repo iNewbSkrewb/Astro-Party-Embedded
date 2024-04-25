@@ -25,7 +25,7 @@ int32_t max(int32_t a, int32_t b){
  * @param images
  */
 // Assuming FPVector2D has methods to handle fixed-point assignments
-PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t **images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex)
+PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle, const uint16_t **images, FPVector2D initialVelocity, int totalSprites, BoundaryMode boundaryMode, uint8_t oppIndex, uint32_t turn, uint32_t shoot)
     : _position(x << FP_SHIFT, y << FP_SHIFT), // Assume constructor of FPVector2D shifts internally if needed
       _velocity(initialVelocity), // Use the initialVelocity provided
       _size(w << FP_SHIFT, h << FP_SHIFT), // Assume constructor of FPVector2D shifts internally if needed
@@ -35,7 +35,9 @@ PlayerShip::PlayerShip(int16_t x, int16_t y, int16_t w, int16_t h, int32_t angle
       _boundaryMode(boundaryMode), // Store the boundary mode
       _inputLeft(false),
       _inputRight(true),
-      _oppIndex(oppIndex)
+      _oppIndex(oppIndex),
+      turnButton(turn),
+      shootButton(shoot)
 {
     updateSpriteIndex(); // Calculate the initial sprite index
 }
@@ -53,7 +55,15 @@ void PlayerShip::updateSpriteIndex()
 
 #define DRIFT_FACTOR 0.05  // This controls the rate of change of the velocity toward the desired direction
 
-void PlayerShip::update() {
+void PlayerShip::update(uint32_t buttons) {
+    if (buttons & (1<<shootButton)){
+      shoot();
+    }
+    if (buttons & (1<< turnButton)){
+        handleInput();
+    }
+
+
     int angleIndex = _angle % 360;  // Ensure angle is within range
     int32_t sin_value = SIN_LUT[angleIndex];
     int32_t cos_value = COS_LUT[angleIndex];
@@ -74,6 +84,7 @@ void PlayerShip::update() {
     // Boundary checks
     _position.x = max(0, min(_position.x, (SCREENWIDTH << FP_SHIFT) - _size.x));
     _position.y = max(0, min(_position.y, (SCREENHEIGHT << FP_SHIFT) - _size.y));
+
 }
 
 

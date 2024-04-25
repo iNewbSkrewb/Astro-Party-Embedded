@@ -8,9 +8,9 @@ void startScreenUpdate(void){
 
 }
 
-void gameScreenUpdate(void){
+void gameScreenUpdate(uint32_t buttons){
     for (PlayerShip& ship : players) {
-        ship.update();
+        ship.update(buttons);
         ship.updateProjectiles(bg);
     }
 }
