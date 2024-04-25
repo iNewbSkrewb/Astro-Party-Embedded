@@ -1,5 +1,8 @@
 #include "ScreenManager.h"
 #include "PlayerShip.h"
+#include "Switch.h"
+#include "Vector.h"
+
 
 extern PlayerShip players[2];
 extern const uint16_t* bg;
@@ -7,6 +10,9 @@ extern game_state_t game_state;
 #include "../inc/SlidePot.h"
 
 extern SlidePot Sensor;
+
+static int hasWon = 0;
+int winner;
 
 void startScreenUpdate(void){
 
@@ -27,13 +33,20 @@ void gameScreenUpdate(uint32_t buttons) {
 }
 
 void winScreenUpdate(void){
+    if (Switch_In() & (1<<17) && Switch_In() & (1<<13)) {
+        game_state = GAME;
+        players[0]._position = FPVector2D(60, 40);
+        players[1]._position = FPVector2D(60, 40);
+        ST7735_DrawBitmap(0, 128, bg, 160, 128);
+        hasWon = 0;
+
+    }
 }
 
 void drawStartScreen(void){
 
 }
-static int hasWon = 0;
-int winner;
+
 void drawWinScreen(void) {
     if (!hasWon){
         hasWon = 1;
