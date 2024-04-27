@@ -1,10 +1,3 @@
-/*
- * Projectiles.h
- *
- *  Created on: Apr 22, 2024
- *      Author: aster
- */
-
 #ifndef PROJECTILES_H_
 #define PROJECTILES_H_
 #include "Vector.h"

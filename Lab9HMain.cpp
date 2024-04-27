@@ -17,11 +17,16 @@
 #include "Switch.h"
 #include "LED.h"
 #include "Sound.h"
-#include "images.h"
+#include "../images/images.h"
 #include "ScreenManager.h"
 extern "C" void __disable_irq(void);
 extern "C" void __enable_irq(void);
 extern "C" void TIMG12_IRQHandler(void);
+
+void Sound_Init(uint32_t period, uint32_t priority);
+void Sound_Start(uint32_t period);
+void Sound_Stop(void);
+
 
 /**
  * @brief This sets the bus speed of the microcontroller, which affects the microcontroller operation frequency
@@ -55,6 +60,7 @@ volatile int semaphore = 0;
 // games  engine runs at 30Hz
 void TIMG12_IRQHandler(void)
 {
+  static uint32_t soundTh = 0;
   uint32_t pos, msg;
   if ((TIMG12->CPU_INT.IIDX) == 1)
 
@@ -67,7 +73,9 @@ void TIMG12_IRQHandler(void)
     case WIN: winScreenUpdate();
     }
     // 4) start sounds
+
     semaphore = 1;
+
 }
 
 
@@ -82,9 +90,10 @@ int main(void)
   ST7735_SetRotation(1);
   ST7735_DrawBitmap(0, 128, bg, 160, 128);
   Sensor.Init(); // PB18 = ADC1 channel 5, slidepot
-  Switch_Init(); // initialize switches
+  Sound_Init(1,0); // initialize switches
+  Switch_Init();
   LED_Init();    // initialize LED
-  Sound_Init();  // initialize sound
+  DAC5_Init();
 //  TExaS_Init(0,0,&TExaS_LaunchPadLogicPB27PB26); // PB27 and PB26
   TimerG12_IntArm(80000000 / 30, 2);
   __enable_irq();
@@ -111,6 +120,7 @@ int main(void)
     // check for end game or level switch
   }
 }
+
 
 
 // Tests

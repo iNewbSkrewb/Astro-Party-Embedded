@@ -1,6 +1,11 @@
 #include "PlayerShip.h"
 #include "Switch.h"
+#include "../inc/Clock.h"
 
+
+extern void Sound_Start(uint32_t period);
+extern void Sound_Stop(void);
+extern uint8_t soundChoice;
 
 const unsigned short bullet[] = {
  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
@@ -138,6 +143,8 @@ void PlayerShip::handleInput() {
 }
 
 void PlayerShip::shoot() {
+    soundChoice = 0;
+    Sound_Start(2000);
     int angleIndex = _angle % 360;
     int32_t sin_value = SIN_LUT[angleIndex];
     int32_t cos_value = COS_LUT[angleIndex];

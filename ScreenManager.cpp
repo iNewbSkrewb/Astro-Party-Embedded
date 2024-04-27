@@ -8,8 +8,15 @@ extern PlayerShip players[2];
 extern const uint16_t* bg;
 extern game_state_t game_state;
 #include "../inc/SlidePot.h"
+#include "../inc/Clock.h"
+
+extern uint8_t soundChoice;
 
 extern SlidePot Sensor;
+
+extern void Sound_Start(uint32_t period);
+extern void Sound_Stop(void);
+
 
 static int hasWon = 0;
 int winner;
@@ -35,11 +42,10 @@ void gameScreenUpdate(uint32_t buttons) {
 void winScreenUpdate(void){
     if (Switch_In() & (1<<17) && Switch_In() & (1<<13)) {
         game_state = GAME;
-        players[0]._position = FPVector2D(60, 40);
+        players[0]._position = FPVector2D(0, 0);
         players[1]._position = FPVector2D(60, 40);
         ST7735_DrawBitmap(0, 128, bg, 160, 128);
         hasWon = 0;
-
     }
 }
 
@@ -50,17 +56,25 @@ void drawStartScreen(void){
 void drawWinScreen(void) {
     if (!hasWon){
         hasWon = 1;
-    ST7735_FillScreen(ST7735_BLACK);
-    winner = (players[0].checkCollision(players[1])) ? 2 : 1;
+        ST7735_FillScreen(ST7735_BLACK);
+        winner = (players[0].checkCollision(players[1])) ? 2 : 1;
     }
+    soundChoice = 1;
+    Sound_Start(2000);
     ST7735_SetCursor(0, 0);
     if (winner == 1){
-        if (Sensor.In() < 2048) ST7735_OutString(" The winner: player 1");
-        else                    ST7735_OutString("El ganador: jugador 1");
+        if (Sensor.In() < 2048) {
+            ST7735_OutString(" The winner: player 1");
+        }else{
+            ST7735_OutString("El ganador: jugador 1");
+        }
     }
     else {
-        if (Sensor.In() < 2048) ST7735_OutString(" The winner: player 2");
-        else                    ST7735_OutString("El ganador: jugador 2");
+        if (Sensor.In() < 2048) {
+            ST7735_OutString(" The winner: player 2");
+        }else{
+            ST7735_OutString("El ganador: jugador 2");
+        }
     }
 
 }
